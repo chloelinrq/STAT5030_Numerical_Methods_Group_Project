@@ -17,6 +17,8 @@ This part constructs a U.S. Treasury yield curve using real-time data from the F
 - **Rate Extraction Utilities** — Forward rates, discount factors, and zero rates for any maturity
 - **Visualization** — Side-by-side comparison plot of all three interpolation methods
 
+---
+
 # Structure
 
 ```
