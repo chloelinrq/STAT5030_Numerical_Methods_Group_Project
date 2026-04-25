@@ -1,6 +1,9 @@
 # STAT5030_Numerical_Methods_Group_Project
 STAT5030NumericalMethodsGroupProject: Prepayment Modelling
 # Introduction：
+This project implements a full pipeline for Mortgage-Backed Securities (MBS) valuation under stochastic interest rate dynamics. It is structured in four parts: Part 1 constructs a U.S. Treasury yield curve from live FRED data using three interpolation methods (Piecewise Constant, Cubic Spline, and the area-preserving quadratic spline APQS method). Part 2 calibrates a 2-Factor Hull-White model to the fitted curve and simulates short-rate paths via Monte Carlo. Part 3 models nonlinear prepayment (CPR) behavior across all simulated paths. Part 4 discounts the resulting cash flows using the simulated rates to compute a theoretical MBS price via Monte Carlo pricing.
+
+---
 # Part 1: Construct the Yield Curve
 This part constructs a U.S. Treasury yield curve using real-time data from the Federal Reserve Economic Data (FRED) database, and provides three interpolation methods for curve fitting and rate extraction.
 
