@@ -24,7 +24,8 @@ This part constructs a U.S. Treasury yield curve using real-time data from the F
 ```
 ├── 1. get_treasury_yields_from_fred()   # FRED data ingestion
 ├── 2. class YieldCurve                  # Interpolation engine
-│   ├── __init__()                       # Builds discount factors & piecewise forward rates
+│   ├── __init__(self, maturities, yields)
+        # Builds discount factors & piecewise forward rates
 │   ├── get_interpolation(method)        # Returns callable yield curve function
 │   ├── _build_apq_spline()              # APQS (Hagan) spline construction
 │   ├── get_forward_rate(t, method)      # Instantaneous forward rate f(t)
