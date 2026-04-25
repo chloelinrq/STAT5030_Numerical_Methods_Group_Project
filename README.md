@@ -20,50 +20,19 @@ This part constructs a U.S. Treasury yield curve using real-time data from the F
 # Structure
 
 ```
-├── 1. get_treasury_yields_from_fred()
-│       No inputs
-│       Returns: pd.DataFrame with columns Maturity (years) and Yield (%)
-│       Fetches the latest non-null business day Treasury yields from FRED
-│       across 11 tenors: 1M, 3M, 6M, 1Y, 2Y, 3Y, 5Y, 7Y, 10Y, 20Y, 30Y
-│
-├── 2. class YieldCurve
-│   │
-│   ├── __init__(self, maturities, yields)
-│   │       maturities : array-like of float  – tenor nodes in years, unsorted ok
-│   │       yields     : array-like of float  – zero yields in decimal (e.g. 0.045)
-│   │       Internally computes discount factors P(0,T) = exp(-y·T) and
-│   │       piecewise constant forward rates A[j] for each interval
-│   │
-│   ├── get_interpolation(self, method='apqs')
-│   │       method : str – 'piecewise' | 'cubic' | 'apqs'  (default: 'apqs')
-│   │       Returns: Callable f(t) → yield (decimal) for any maturity t
-│   │
-│   ├── _build_apq_spline(self)                         [internal]
-│   │       No inputs (uses self.A, self.delta, self.T_aug)
-│   │       Solves a banded linear system for forward rate nodes f_nodes,
-│   │       then returns yield_func(t) and stores forward_func as
-│   │       self._apqs_forward_func
-│   │
-│   ├── get_forward_rate(self, t, method='apqs')
-│   │       t      : float or array-like – maturity in years
-│   │       method : str – 'apqs' | 'cubic' | 'piecewise'  (default: 'apqs')
-│   │       Returns: np.ndarray – instantaneous forward rate f(t) in decimal
-│   │
-│   ├── get_discount_factor(self, t, method='apqs')
-│   │       t      : float or array-like – maturity in years
-│   │       method : str – 'apqs' | 'cubic' | 'piecewise'  (default: 'apqs')
-│   │       Returns: np.ndarray – P(0,t) = exp(-∫₀ᵗ f(s)ds) in (0, 1]
-│   │
-│   └── get_zero_rate(self, t, method='apqs')
-│           t      : float or array-like – maturity in years
-│           method : str – 'apqs' | 'cubic' | 'piecewise'  (default: 'apqs')
-│           Returns: np.ndarray – y(t) = -log(P(0,t))/t in decimal
-│                    At t=0, approximated as f(1e-8) to avoid division by zero
-│
-└── 3. Visualization
-        Plots yield curves from all three methods against raw FRED market data
-        (red dots=market, blue dashed=piecewise, red dash-dot=cubic, black=APQS)
+├── 1. get_treasury_yields_from_fred()   # FRED data ingestion
+├── 2. class YieldCurve                  # Interpolation engine
+│   ├── __init__()                       # Builds discount factors & piecewise forward rates
+│   ├── get_interpolation(method)        # Returns callable yield curve function
+│   ├── _build_apq_spline()              # APQS (Hagan) spline construction
+│   ├── get_forward_rate(t, method)      # Instantaneous forward rate f(t)
+│   ├── get_discount_factor(t, method)   # Discount factor P(0,t)
+│   └── get_zero_rate(t, method)         # Zero/spot rate y(t)
+└── 3. Visualization                     # Interpolation comparison plot
 ```
+
+---
+
 
 
 ## Part 2: Calibrate and Simulate Interest Rate Paths
