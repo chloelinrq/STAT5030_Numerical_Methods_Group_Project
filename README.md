@@ -102,6 +102,15 @@ It is resampling uniformly from the observed data points.
 # Part 4: MBS Valuation
 This part implements Mortgage-Backed Security (MBS) valuation using simulated short rate paths from a Hull-White model and CPR projections from a refinancing model. It supports single- and multi-coupon pricing with pathwise discounting.
 
+In terms of 
+
+
+# Part 5: Testing MBS valuations in different 3 interest rate path models: 
+
+For the MBS computation process, 
+we now have the short rate (future rates), and CPR paths that are used to for the MBS pricing. With the designed yield curve, we use Hull model to generate parameters and create simulated short-rate paths.
+And with these converted rows of datasets, we use it to create cpr projectsons with the predefined cpr min and cpr max from previous illustrations. Then we design a discrete, path-based approximations
+of pricing such that future cahslfow follows the equation: 
 
 
 ---
