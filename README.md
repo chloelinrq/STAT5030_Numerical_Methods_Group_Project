@@ -7,7 +7,6 @@ This project prices Mortgage-Backed Securities by simulating prepayment behavior
 This part constructs a U.S. Treasury yield curve using real-time data from the Federal Reserve Economic Data (FRED) database, and provides three interpolation methods for curve fitting and rate extraction.
 
 
-SS
 ---
 
 ## Features
@@ -102,29 +101,27 @@ It is resampling uniformly from the observed data points.
 # Part 4: MBS Valuation
 This part implements Mortgage-Backed Security (MBS) valuation using simulated short rate paths from a Hull-White model and CPR projections from a refinancing model. It supports single- and multi-coupon pricing with pathwise discounting.
 
-In terms of 
+1. For the MBS valuation process, we now have two key inputs: short rate paths and CPR paths.
 
-For the MBS computation process, 
-we now have the short rate (future rates), and CPR paths that are used to for the MBS pricing. With the designed yield curve, we use Hull model to generate parameters and create simulated short-rate paths.
-And with these converted rows of datasets, we use it to create cpr projectsons with the predefined cpr min and cpr max from previous illustrations. Then we design a discrete, path-based approximations
-of pricing such that future cahslfow follows the equation: 
+2. Now, our future cash flows follow the equation:
 
- we use: Future Cashflow (Principal + Interest) = Interest + Scheduled Principal + Preypayment. 
- For interest, we design such that it is Balance * q, where q = coupon / 12 
+CF_t = Interest_t + Scheduled Principal_t + Prepayment_t
 
-In terms of scheduled principal, we have min(PMT - Interest, Bt):
+Where:
 
-We also have prepayment as SMM * (Bt - Scheduled Principal).
+Interest_t = Balance_{t-1} × q, where q = Coupon Rate / 12
 
-with these combined, we have the future projected cashflow. Then, we discount to the present value using 
-  PV (Present Value) = CF(t) * DF(t) where discount factor means how much value it is baesd on the interest rates from Hull-White model. 
-With the Present Value, then we add all the simulated Present Values and divide by the number to find the average. 
+Scheduled Principal_t = min(PMT − Interest_t, B_{t-1})    # PMT: Monthly Payment, B_{t-1}: Remaining Balance at time t
 
+Prepayment_t = SMM_t × (B_{t-1} − Scheduled Principal_t)
 
+3. We discount the cash flows back using the discount factors (DF_t) derived from the Hull-White short-rate paths:
 
-# Part 5: Testing MBS valuations in different 3 interest rate path models: 
+PV = \sum_{t=1}^{T} CF_t \times DF_t
 
+4. Finally, we compute the average Present Value across all N simulated paths to get the price of MBS:
 
+\text{Value} = \frac{1}{N} \sum_{i=1}^{N} PV_i
 ---
 
 ## Features
@@ -145,11 +142,6 @@ With the Present Value, then we add all the simulated Present Values and divide 
 ├── 1. calculate_mbs_price()            # Core Monte Carlo pricing logic
 │   ├── Compute monthly payment         # pmt = B0 × (q(1+q)^N) / ((1+q)^N - 1)
 │   ├── Loop over each Monte Carlo path
-│   │   ├── Amortize balance month-by-month
-│   │   ├── Calculate scheduled principal + interest
-│   │   ├── Compute SMM from CPR        # SMM = 1 - (1 - CPR)^(1/12)
-│   │   ├── Add prepayment to cash flow
-│   │   ├── Apply discount factor       # exp(-r(t) × 1/12)
 │   └── Return average price + path PVs
 │
 ├── 2. run_mbs_valuation()              # Wrapper to orchestrate simulation
