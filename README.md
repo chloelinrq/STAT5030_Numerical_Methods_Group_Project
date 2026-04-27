@@ -1,6 +1,6 @@
 # STAT5030_Numerical_Methods_Group_Project
 # Introduction：
-This project prices Mortgage-Backed Securities by simulating prepayment behavior under realistic interest rate conditions. It is structured in four parts: Part 1 constructs a U.S. Treasury yield curve from live FRED data using three interpolation methods (Piecewise Constant, Cubic Spline, and the area-preserving quadratic spline APQS method). Part 2 calibrates a 2-Factor Hull-White model to the fitted curve and simulates short-rate paths via Monte Carlo. Part 3 models nonlinear prepayment (CPR) behavior across all simulated paths. Part 4 discounts the resulting cash flows using the simulated rates to compute a theoretical MBS price via Monte Carlo pricing. At the end, we show the nuainces of pricing methologies using different interet rate models as a result.
+This project prices Mortgage-Backed Securities by simulating prepayment behavior under realistic interest rate conditions. It is structured in four parts: Part 1 constructs a U.S. Treasury yield curve from live FRED data using three interpolation methods (Piecewise Constant, Cubic Spline, and the area-preserving quadratic spline APQS method). Part 2 calibrates a 2-Factor Hull-White model to the fitted curve and simulates short-rate paths via Monte Carlo. Part 3 models nonlinear prepayment (CPR) behavior across all simulated paths. 
 
 ---
 # Part 1: Construct the Yield Curve
@@ -196,7 +196,28 @@ $$\text{Value} = \frac{1}{N} \sum_{i=1}^{N} PV_i$$
 └── 3. Analysis & Visualization         # Coupon sensitivity plotting
 ```
 ---
+# Conclusion：
+After implementing the MBS valuation framework with Hull-White short rate paths and CPR projections, we obtained the following results from the four parts.
 
+Part 1:
+This plot compares three interpolation methods (Piecewise Constant, Cubic Spline, and APQS method) fitted to observed treasury yields. 
+
+![Yield Curve Construction](images/1.png)
+
+Part 2:
+Using the yield curve fitted in Part 1 as the target term structure for calibration, the plot displays multiple interest rate paths via Monte Carlo simulation of a calibrated 2-Factor Hull-White model.
+
+![Interest Rate Paths Simulation](images/2.png)
+
+Part 3:
+Prepayment behavior is modeled as a nonlinear function of interest rate movements, reflecting refinancing incentives. This figure shows how CPR evolves over time if we choose the coupon rate to be 6.5%.
+
+![CPR Behavior Modeling](images/3.png)
+
+Part 4:
+Using short rate paths and CPR paths, we calculate our MBS price by discounting projected cash flows along each path and averaging the present values across all Monte Carlo simulations. This figure shows the calculated MBS prices under different coupon rates when we choose apqs method.
+
+![MBS Valuation](images/4.png)
 
 # Citations：
 Hagan, P. S. (2018). Building curves using area preserving quadratic splines https://onlinelibrary.wiley.com/doi/abs/10.1002/wilm.10676
