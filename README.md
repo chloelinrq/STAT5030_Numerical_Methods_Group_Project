@@ -167,7 +167,7 @@ Prepayment behavior is modeled as a nonlinear function of interest rate movement
 ![CPR Behavior Modeling](images/3.png)
 
 Part 4:
-Using short rate paths and CPR paths, we calculate our MBS price by discounting projected cash flows along each path and averaging the present values across all Monte Carlo simulations. This figure shows the calculated MBS prices under different coupon rates.
+Using short rate paths and CPR paths, we calculate our MBS price by discounting projected cash flows along each path and averaging the present values across all Monte Carlo simulations. This figure shows the calculated MBS prices under different coupon rates when we choose apqs method.
 ![MBS Valuation](images/4.png)
 
 # Citations：
