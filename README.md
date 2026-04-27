@@ -108,14 +108,16 @@ This part implements Mortgage-Backed Security (MBS) valuation using simulated sh
 $$CF_t = \text{Interest}_t + \text{Scheduled Principal}_t + \text{Prepayment}_t$$
 
 Where:
-- Interest$_t = \text{Balance}_{t-1} \times q$  (where $q = \text{Coupon Rate} / 12$)
-- Scheduled Principal$_t = \min(\text{PMT} - \text{Interest}_t, B_{t-1})$    # PMT: Monthly Payment, $B_{t-1}$: Remaining Balance at time $t$
-- Prepayment$_t = \text{SMM}_t \times (B_{t-1} - \text{Scheduled Principal}_t)$
+- $Interest_t = Balance_{t-1} \times q$ (where $q = Coupon Rate / 12$)
+- $Scheduled Principal_t = \min(PMT - Interest_t, B_{t-1})$
+- $Prepayment_t = SMM_t \times (B_{t-1} - Scheduled Principal_t)$
 
 3. We discount the cash flows back using the discount factors ($DF_t$) derived from the Hull-White short-rate paths:
+
 $$PV = \sum_{t=1}^{T} CF_t \times DF_t$$
 
 4. Finally, we compute the average Present Value across all $N$ simulated paths to get the price of MBS:
+
 $$\text{Value} = \frac{1}{N} \sum_{i=1}^{N} PV_i$$
 ---
 
