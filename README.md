@@ -93,7 +93,7 @@ This part implements Mortgage-Backed Security (MBS) valuation using simulated sh
 
 ## Structure
 
-```python
+```
 ├── 1. calculate_mbs_price()            # Core Monte Carlo pricing logic
 │   ├── Compute monthly payment         # pmt = B0 × (q(1+q)^N) / ((1+q)^N - 1)
 │   ├── Loop over each Monte Carlo path
