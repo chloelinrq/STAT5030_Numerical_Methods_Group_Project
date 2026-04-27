@@ -73,8 +73,45 @@ Now we have Annualized CPR.
 As we have the Annualzied CPR of each bonds at that period of time, 
 
 # Part 4: MBS Valuation
+This part implements Mortgage-Backed Security (MBS) valuation using simulated short rate paths from a Hull-White model and CPR projections from a refinancing model. It supports single- and multi-coupon pricing with pathwise discounting.
 
 
+
+---
+
+## Features
+
+**Simulated Short Rate Integration** — Uses Hull-White simulated short rate paths (`hw_rates`) with shape `(M × N+1)` for monthly discounting
+
+**CPR Path Selection** — Retrieves path-specific CPR projections from `refi_df` based on the MBS coupon rate, pivoted to a `(M × N+1)` matrix
+
+**Monte Carlo Pricing** — Returns the MBS price as the average of all path present values
+
+**Multi-Coupon Support** — Prices multiple coupon rates in batch for sensitivity analysis
+
+---
+
+## Structure
+
+```python
+├── 1. calculate_mbs_price()            # Core Monte Carlo pricing logic
+│   ├── Compute monthly payment         # pmt = B0 × (q(1+q)^N) / ((1+q)^N - 1)
+│   ├── Loop over each Monte Carlo path
+│   │   ├── Amortize balance month-by-month
+│   │   ├── Calculate scheduled principal + interest
+│   │   ├── Compute SMM from CPR        # SMM = 1 - (1 - CPR)^(1/12)
+│   │   ├── Add prepayment to cash flow
+│   │   ├── Apply discount factor       # exp(-r(t) × 1/12)
+│   └── Return average price + path PVs
+│
+├── 2. run_mbs_valuation()              # Wrapper to orchestrate simulation
+│   ├── Load/simulate hw_rates          # Hull-White short rate paths (M × N+1)
+│   ├── Load refi_df with CPR projections
+│   ├── Call calculate_mbs_price()
+│   └── Return price and path PVs
+│
+└── 3. Analysis & Visualization         # Coupon sensitivity plotting
+---
 
 
 
