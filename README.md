@@ -104,13 +104,25 @@ This part implements Mortgage-Backed Security (MBS) valuation using simulated sh
 
 In terms of 
 
-
-# Part 5: Testing MBS valuations in different 3 interest rate path models: 
-
 For the MBS computation process, 
 we now have the short rate (future rates), and CPR paths that are used to for the MBS pricing. With the designed yield curve, we use Hull model to generate parameters and create simulated short-rate paths.
 And with these converted rows of datasets, we use it to create cpr projectsons with the predefined cpr min and cpr max from previous illustrations. Then we design a discrete, path-based approximations
 of pricing such that future cahslfow follows the equation: 
+
+ we use: Future Cashflow (Principal + Interest) = Interest + Scheduled Principal + Preypayment. 
+ For interest, we design such that it is Balance * q, where q = coupon / 12 
+
+In terms of scheduled principal, we have min(PMT - Interest, Bt):
+
+We also have prepayment as SMM * (Bt - Scheduled Principal).
+
+with these combined, we have the future projected cashflow. Then, we discount to the present value using 
+  PV (Present Value) = CF(t) * DF(t) where discount factor means how much value it is baesd on the interest rates from Hull-White model. 
+With the Present Value, then we add all the simulated Present Values and divide by the number to find the average. 
+
+
+
+# Part 5: Testing MBS valuations in different 3 interest rate path models: 
 
 
 ---
