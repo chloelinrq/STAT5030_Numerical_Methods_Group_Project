@@ -42,6 +42,51 @@ This part constructs a U.S. Treasury yield curve using real-time data from the F
 
 
 # Part 2: Calibrate and Simulate Interest Rate Paths
+This part uses the fitted Treasury yield curve from Part 1 to initalize and simulate a 2-Factor Hull-White short-rate model under Monte Carlo. The model generates pathwise short-rate scenarios that will be used in part 3 for CPR modeling and in Part 4 for MBS valuation.
+
+---
+
+## Features
+
+- **Yield Curve Interface** - Uses the fitted yield curve from Part 1 as the initial term structure input
+
+- **Two-Factor Hull-White Model** - Models the short rate as the sum of two latent factors and a deterministic shift term
+$$r(t) = x(t)+y(t)+\phi(t)$$
+
+- **Curve-Consistent Initialization** - Extracts the inital forward curve f(0,t) and initial short rate r(0) from the fitted yield curve
+
+- **Correlated Monte Carlo Simulation** - Simulates two correlated Brownian shocks to generate pathwise short-rate scenarios under the 2-factor Hull-White
+
+- **Path Statistics and Visualization** - Produce sample short-rate path plots together with the mean path and 90% simulation band
+
+- **Scenario Export** - Converts simulated short-rate paths into a DataFrame for downstream CPR modeling and MBS valuation
+
+---
+
+## Structure
+
+```
+├── 1. Interface from Part 1           # Connect fitted yield curve
+│   ├── Extract maturities and yields
+│   ├── Initialize YieldCurve
+│   ├── Compute f(0,t) and r(0)
+│
+├── 2. class HullWhiteModel            # Core 2-factor model
+│   ├── __init__(self, yield_curve, a, b, sigma, eta, rho, method) 
+│   │                       # Stores curve object and model parameters      
+│   ├── f0(self, t)                    # Initial forward curve
+│   ├── phi(self, t)                   # Deterministic shift term
+│   └── simulate(self, T, n_steps, n_paths, seed)
+│                           # Simulates x(t), y(t), and short-rate paths r(t)
+│
+├── 3. Simulation                      # Monte Carlo path generation
+│   ├── Set a, b, sigma, eta, rho      # Parameter Specification
+│   ├── Return rates, x_paths, y_paths, t_grid
+│
+├── 4. Visualization and Data Export   # Path plots and dataframe
+```
+
+---
 
 
 
