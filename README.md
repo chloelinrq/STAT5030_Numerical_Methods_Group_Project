@@ -119,6 +119,7 @@ $$PV = \sum_{t=1}^{T} CF_t \times DF_t$$
 4. Finally, we compute the average Present Value across all $N$ simulated paths to get the price of MBS:
 
 $$\text{Value} = \frac{1}{N} \sum_{i=1}^{N} PV_i$$
+
 ---
 
 ## Features
