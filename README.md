@@ -16,7 +16,7 @@ This part constructs a U.S. Treasury yield curve using real-time data from the F
 - **Three Interpolation Methods:**
   - Piecewise Constant: Returns the yield of the nearest tenor node to the left. Forward rates are constant within each interval, derived analytically from consecutive discount factors.
   - Cubic Spline: Uses SciPy's `CubicSpline` with natural boundary conditions fitted directly to the observed yields. Produces a smooth, twice-differentiable yield curve.
-  - Area-Preserving Quadratic Spline (APQS)(Hagan, 2018): Forward rates are represented as within each interval. Solves a banded linear system to determine forward rate node values (`f_nodes`). The integral of the forward curve exactly reproduces the observed discount factors (area-preserving). Avoids the oscillation artifacts common in cubic spline forward curves. 
+  - Area-Preserving Quadratic Spline (APQS)(Hagan, 2018): Forward rates are represented as quadratic within each interval. Solves a tridiagonal linear system to determine forward rate node values (`f_nodes`). The integral of the forward curve exactly reproduces the observed discount factors (area-preserving). In theory, avoids the "double hump" artifacts common in smart quadratic methods by enforcing continuity of the derivative at each node. In practice, performance depends on data quality and node spacing.
 
 - **Rate Extraction Utilities** — Forward rates, discount factors, and zero rates for any maturity
 - **Visualization** — Side-by-side comparison plot of all three interpolation methods
