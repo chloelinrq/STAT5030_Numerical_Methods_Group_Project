@@ -9,6 +9,7 @@ The SMM represents the percentage of the outstanding principal balance (after sc
 
 $$ SMM = Unscheduled Principa \ ((Beginning Balance} - (Scheduled Principal))
 
+$$s
 Based on the Freddie Mac Supplemental Daily Prepayment Report, we map the variables as follows:
 * **Beginning Balance:** Cohort Current UPB
 * **Scheduled Principal:** Scheduled Principal
