@@ -1,13 +1,12 @@
 # STAT5030_Numerical_Methods_Group_Project
 # Introduction：
-This project prices Mortgage-Backed Securities by simulating prepayment behavior under realistic interest rate conditions. It is structured in four parts: Part 1 constructs a U.S. Treasury yield curve from live FRED data using three interpolation methods (Piecewise Constant, Cubic Spline, and the area-preserving quadratic spline APQS method). Part 2 calibrates a 2-Factor Hull-White model to the fitted curve and simulates short-rate paths via Monte Carlo. Part 3 models nonlinear prepayment (CPR) behavior across all simulated paths. Part 4 discounts the resulting cash flows using the simulated rates to compute a theoretical MBS price via Monte Carlo pricing. At the end, we show the nuainces of pricing methologies using different interet rate models as a result.
+This project prices Mortgage-Backed Securities by simulating prepayment behavior under realistic interest rate conditions. It is structured in four parts: Part 1 constructs a U.S. Treasury yield curve from live FRED data using three interpolation methods (Piecewise Constant, Cubic Spline, and the area-preserving quadratic spline APQS method). Part 2 calibrates a 2-Factor Hull-White model to the fitted curve and simulates short-rate paths via Monte Carlo. Part 3 models nonlinear prepayment (CPR) behavior across all simulated paths. 
 
 ---
 # Part 1: Construct the Yield Curve
 This part constructs a U.S. Treasury yield curve using real-time data from the Federal Reserve Economic Data (FRED) database, and provides three interpolation methods for curve fitting and rate extraction.
 
 
-SS
 ---
 
 ## Features
@@ -43,6 +42,72 @@ SS
 
 
 # Part 2: Calibrate and Simulate Interest Rate Paths
+This part uses the fitted Treasury yield curve from Part 1 to initalize and simulate a 2-Factor Hull-White short-rate model under Monte Carlo. The model generates pathwise short-rate scenarios that will be used in part 3 for CPR modeling and in Part 4 for MBS valuation.
+
+---
+
+The short rate is modeled as 
+$$r(t)=x(t)+y(t)+\phi(t)$$
+
+where
+
+$$dx(t) = -a x(t)dt+\sigma dW_1(t)$$
+
+$$dy(t) = -b y(t)dt+\eta dW_2(t)$$
+
+and 
+
+$$\mathrm{corr}(dW_1,dW_2)=\rho$$
+
+The deterministic shift term is
+
+$$
+\phi(t)=f(0,t)
++\frac{\sigma^2}{2a^2}(1-e^{-at})^2
++\frac{\eta^2}{2b^2}(1-e^{-bt})^2
++\frac{\rho\sigma\eta}{ab}(1-e^{-at})(1-e^{-bt})
+$$
+
+---
+
+## Features
+
+- **Yield Curve Interface** - Uses the fitted yield curve from Part 1 as the initial term structure input
+
+- **Two-Factor Hull-White Model** - Models the short rate paths under the 2-factor Hull-White framework
+
+- **Correlated Monte Carlo Simulation** - Simulates two correlated Brownian shocks to generate pathwise short-rate scenarios
+
+- **Path Statistics and Visualization** - Produce sample short-rate path plots together with the mean path and 90% simulation band
+
+- **Scenario Export** - Converts simulated short-rate paths into a DataFrame for downstream CPR modeling and MBS valuation
+
+---
+
+## Structure
+
+```
+├── 1. Interface from Part 1           # Connect fitted yield curve
+│   ├── Extract maturities and yields
+│   ├── Initialize YieldCurve
+│   ├── Compute f(0,t) and r(0)
+│
+├── 2. class HullWhiteModel            # Core 2-factor model
+│   ├── __init__(self, yield_curve, a, b, sigma, eta, rho, method) 
+│   │                       # Stores curve object and model parameters      
+│   ├── f0(self, t)                    # Initial forward curve
+│   ├── phi(self, t)                   # Deterministic shift term
+│   └── simulate(self, T, n_steps, n_paths, seed)
+│                           # Simulates x(t), y(t), and short-rate paths r(t)
+│
+├── 3. Simulation                      # Monte Carlo path generation
+│   ├── Set a, b, sigma, eta, rho      # Parameter Specification
+│   ├── Return rates, x_paths, y_paths, t_grid
+│
+├── 4. Visualization and Data Export   # Path plots and dataframe
+```
+
+---
 
 
 
@@ -102,28 +167,24 @@ It is resampling uniformly from the observed data points.
 # Part 4: MBS Valuation
 This part implements Mortgage-Backed Security (MBS) valuation using simulated short rate paths from a Hull-White model and CPR projections from a refinancing model. It supports single- and multi-coupon pricing with pathwise discounting.
 
-In terms of 
+1. For the MBS valuation process, we now have two key inputs: short rate paths and CPR paths.
 
-For the MBS computation process, 
-we now have the short rate (future rates), and CPR paths that are used to for the MBS pricing. With the designed yield curve, we use Hull model to generate parameters and create simulated short-rate paths.
-And with these converted rows of datasets, we use it to create cpr projectsons with the predefined cpr min and cpr max from previous illustrations. Then we design a discrete, path-based approximations
-of pricing such that future cahslfow follows the equation: 
+2. Now, our future cash flows follow the equation:
 
- we use: Future Cashflow (Principal + Interest) = Interest + Scheduled Principal + Preypayment. 
- For interest, we design such that it is Balance * q, where q = coupon / 12 
+$$CF_t = \text{Interest}_t + \text{Scheduled Principal}_t + \text{Prepayment}_t$$
 
-In terms of scheduled principal, we have min(PMT - Interest, Bt):
+Where:
+- $Interest_t = Balance_{t-1} \times q$ (where $q = Coupon Rate / 12$)
+- $Scheduled Principal_t = \min(PMT - Interest_t, B_{t-1})$
+- $Prepayment_t = SMM_t \times (B_{t-1} - Scheduled Principal_t)$
 
-We also have prepayment as SMM * (Bt - Scheduled Principal).
+3. We discount the cash flows back using the discount factors ($DF_t$) derived from the Hull-White short-rate paths:
 
-with these combined, we have the future projected cashflow. Then, we discount to the present value using 
-  PV (Present Value) = CF(t) * DF(t) where discount factor means how much value it is baesd on the interest rates from Hull-White model. 
-With the Present Value, then we add all the simulated Present Values and divide by the number to find the average. 
+$$PV = \sum_{t=1}^{T} CF_t \times DF_t$$
 
+4. Finally, we compute the average Present Value across all $N$ simulated paths to get the price of MBS:
 
-
-# Part 5: Testing MBS valuations in different 3 interest rate path models: 
-
+$$\text{Value} = \frac{1}{N} \sum_{i=1}^{N} PV_i$$
 
 ---
 
@@ -145,11 +206,6 @@ With the Present Value, then we add all the simulated Present Values and divide 
 ├── 1. calculate_mbs_price()            # Core Monte Carlo pricing logic
 │   ├── Compute monthly payment         # pmt = B0 × (q(1+q)^N) / ((1+q)^N - 1)
 │   ├── Loop over each Monte Carlo path
-│   │   ├── Amortize balance month-by-month
-│   │   ├── Calculate scheduled principal + interest
-│   │   ├── Compute SMM from CPR        # SMM = 1 - (1 - CPR)^(1/12)
-│   │   ├── Add prepayment to cash flow
-│   │   ├── Apply discount factor       # exp(-r(t) × 1/12)
 │   └── Return average price + path PVs
 │
 ├── 2. run_mbs_valuation()              # Wrapper to orchestrate simulation
@@ -161,7 +217,28 @@ With the Present Value, then we add all the simulated Present Values and divide 
 └── 3. Analysis & Visualization         # Coupon sensitivity plotting
 ```
 ---
+# Conclusion：
+After implementing the MBS valuation framework with Hull-White short rate paths and CPR projections, we obtained the following results from the four parts.
 
+Part 1:
+This plot compares three interpolation methods (Piecewise Constant, Cubic Spline, and APQS method) fitted to observed treasury yields. 
+
+![Yield Curve Construction](images/1.png)
+
+Part 2:
+Using the yield curve fitted in Part 1 as the target term structure for calibration, the plot displays multiple interest rate paths via Monte Carlo simulation of a calibrated 2-Factor Hull-White model.
+
+![Interest Rate Paths Simulation](images/2.png)
+
+Part 3:
+Prepayment behavior is modeled as a nonlinear function of interest rate movements, reflecting refinancing incentives. This figure shows how CPR evolves over time if we choose the coupon rate to be 6.5%.
+
+![CPR Behavior Modeling](images/3.png)
+
+Part 4:
+Using short rate paths and CPR paths, we calculate our MBS price by discounting projected cash flows along each path and averaging the present values across all Monte Carlo simulations. This figure shows the calculated MBS prices under different coupon rates when we choose apqs method.
+
+![MBS Valuation](images/4.png)
 
 # Citations：
 Hagan, P. S. (2018). Building curves using area preserving quadratic splines https://onlinelibrary.wiley.com/doi/abs/10.1002/wilm.10676
