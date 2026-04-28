@@ -78,6 +78,8 @@ $$
 
 - **Correlated Monte Carlo Simulation** - Simulates two correlated Brownian shocks to generate pathwise short-rate scenarios
 
+- **Vasicek Benchmark Comparison** - Adds a simple one-factor Vasicek short-rate simulation for benchmark visualization. This is used only to compare mean-reverting behavior against the curve-consistent 2-Factor Hull-White model; the Hull-White paths remain the main input for CPR modeling and MBS valuation.
+
 - **Path Statistics and Visualization** - Produce sample short-rate path plots together with the mean path and 90% simulation band
 
 - **Scenario Export** - Converts simulated short-rate paths into a DataFrame for downstream CPR modeling and MBS valuation
@@ -104,7 +106,11 @@ $$
 │   ├── Set a, b, sigma, eta, rho      # Parameter Specification
 │   ├── Return rates, x_paths, y_paths, t_grid
 │
-├── 4. Visualization and Data Export   # Path plots and dataframe
+├── ├── 4. Benchmark Vasicek Model         # Simple one-factor comparison model
+│   ├── Simulate Vasicek short-rate paths
+│   └── Compare against Hull-White mean path
+│
+├── 5. Visualization and Data Export   # Path plots and dataframe
 ```
 
 ---
@@ -226,7 +232,7 @@ This plot compares three interpolation methods (Piecewise Constant, Cubic Spline
 ![Yield Curve Construction](images/1.png)
 
 Part 2:
-Using the yield curve fitted in Part 1 as the target term structure for calibration, the plot displays multiple interest rate paths via Monte Carlo simulation of a calibrated 2-Factor Hull-White model.
+Using the yield curve fitted in Part 1 as the target term structure for calibration, the plot displays multiple interest rate paths via Monte Carlo simulation of a calibrated 2-Factor Hull-White model. A simple Vasicek benchmark is also included to show that Hull-White better preserves the shape of the initial forward curve through its deterministic shift term, while Vasicek mean-reverts toward a constant long-run level.
 
 ![Interest Rate Paths Simulation](images/2.png)
 
