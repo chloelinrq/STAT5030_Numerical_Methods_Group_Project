@@ -3,6 +3,7 @@
 
 ### 1. Prepayment Computation Framework
 The foundational metrics for measuring prepayment speed are derived from the **Single Monthly Mortality (SMM)** and the **Conditional Prepayment Rate (CPR)**
+The data is derived from Government website Freddiemac.com for real prepayment data report: https://capitalmarkets.freddiemac.com/mbs/daily-prepayment-report
 
 #### Monthly Prepayment Rate (SMM)
 The SMM represents the percentage of the outstanding principal balance (after scheduled payments) that was prepaid in a given month.
@@ -20,7 +21,6 @@ To annualize the monthly sentiment into a yearly expectation:
 $$\text{CPR} = 1 - (1 - \text{SMM})^{12}$$
 
 ---
-
 ### 2. The Logistic Prepayment Model (S-Curve)
 Refinancing behavior is non-linear. Homeowners do not respond to interest rate changes linearly; instead, they follow an **S-Curve** relationship. Prepayment speeds accelerate once a specific threshold is hit but plateau (burnout) as the pool of rational refinancers depletes.
 
@@ -36,14 +36,13 @@ $$CPR(t) = CPR_{min} + (CPR_{max} - CPR_{min}) \times \left( \frac{1}{1 + e^{-k(
 * **$x_0$**: Threshold (the spread required before refinancing becomes economically attractive).
 
 ---
-
 ### 3. Methodology: Bootstrap Monte Carlo
-To avoid the limitations of deterministic models or assuming a perfect Normal distribution, we apply a **Bootstrap sampling** method within our Monte Carlo framework.
+To avoid the limitations of deterministic cpr min and max models or assuming a perfect Normal distribution, we apply a **Bootstrap sampling** method within our Monte Carlo framework.
 
-#### Stochastic $CPR_{min}$ and $CPR_{max}$
+#### $CPR_{min}$ and $CPR_{max}$
 Instead of fixed values, we draw from the actual 2019 data distribution:
-1.  **Lower Bound ($CPR_{min}$):** We isolate the bottom 20% of the observed CPR distribution and resample uniformly. This captures the "baseline" turnover (moves, deaths, divorces) that occurs regardless of rates.
-2.  **Upper Bound ($CPR_{max}$):** We isolate the top 20% of the observed CPR distribution and resample uniformly. This captures the maximum "refinance surge" capacity of the market.
+1.  **Lower Bound ($CPR_{min}$, $CPR_{max}):** We isolate the bottom 20% of the real CPR distribution and resample uniformly. This captures the "baseline" that accurately capture the CPR's behavior that follows S-Curve due to refinance incentives. We apply similar methods to CPR_max for 20 percent top of the distribution. 
+
 
 #### The Simulation Process
 1.  **Interest Rate Path:** Generate $r(t)$ using the **Hull-White short-rate model**.
@@ -52,6 +51,5 @@ Instead of fixed values, we draw from the actual 2019 data distribution:
 4.  **CPR Projection:** Apply the Logistic function to find the future projected prepayment rate.
 
 ---
-
 ### 4. Summary of Results
 By resampling uniformly from observed data points, the model captures **realistically skewed distributions**. This accounts for the fact that refinancing behavior is often suppressed by friction costs and "burnout," providing a more robust risk assessment for mortgage-backed securities than traditional Gaussian simulations.
