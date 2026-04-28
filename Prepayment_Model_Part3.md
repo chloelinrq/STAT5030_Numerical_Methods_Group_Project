@@ -27,7 +27,12 @@ Refinancing behavior is non-linear. Homeowners do not respond to interest rate c
 To model this, we use the **Logistic Curve** equation:
 **CPR(t) = CPR_min + (CPR_max - CPR_min) * [1 / (1 + e^-k(I_t - x_0))]
 
-$$**Variable Definitions:**
+CPR(t) = CPR_{\min} + (CPR_{\max} - CPR_{\min}) \cdot \frac{1}{1 + e^{-k(I_t - x_0)}}
+\label{eq:logistic-cpr}
+\end{equation}
+
+
+**Variable Definitions:**
 * **$I(t) = c - r(t)$**: The **Refinance Sentiment**. 
     * $c$: Original mortgage coupon rate.
     * $r(t)$: Current market rate (projected via the Hull-White Model).
