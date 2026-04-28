@@ -160,7 +160,6 @@ $$\text{CPR}(t) = \text{CPR}_{\min} + (\text{CPR}_{\max} - \text{CPR}_{\min}) \c
 ### 3. Methodology: Bootstrap Monte Carlo
 To avoid the limitations of deterministic cpr min and max models or assuming a perfect Normal distribution, we apply a **Bootstrap sampling** method within our Monte Carlo framework.
 
-#### $CPR_{min} and CPR_{max}$
 Instead of fixed values, we draw from the actual 2019 data distribution:
 1.  **Lower and Higher Bounds ($CPR_{min}, CPR_{max}$):** We isolate the bottom 20% of the real CPR distribution and resample uniformly. This captures the "baseline" that accurately capture the CPR's behavior that follows S-Curve due to refinance incentives. We apply similar methods to CPR_max for 20 percent top of the distribution. 
 
