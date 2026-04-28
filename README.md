@@ -256,3 +256,5 @@ Using short rate paths and CPR paths, we calculate our MBS price by discounting 
 
 # Citations：
 Hagan, P. S. (2018). Building curves using area preserving quadratic splines https://onlinelibrary.wiley.com/doi/abs/10.1002/wilm.10676
+Bon
+Fabozzi, Frank J., and Francesco A. Fabozzi. Bond Markets, Analysis, and Strategies. 10th ed., Pearson, 2021.
