@@ -16,8 +16,7 @@ Based on the Freddie Mac Supplemental Daily Prepayment Report, we map the variab
 
 #### Annualized Prepayment Rate (CPR)
 To annualize the monthly sentiment into a yearly expectation:
-$$CPR = 1 - (1 - SMM)^{12}$$
-
+$$\text{CPR} = 1 - (1 - \text{SMM})^{12}$$
 ---
 
 ### 2. The Logistic Prepayment Model (S-Curve)
