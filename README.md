@@ -117,57 +117,64 @@ $$
 
 
 
-# Part 3: Model Nonlinear Prepayment Behavior under changing interest rate conditions (Using Monte Carlo Prepayment Methodologies)
+# Part 3: Model Nonlinear Prepayment Behavior under changing interest rate conditions
+## Using Monte Carlo Prepayment Methodologies
 
-Data Source: After looking carefully at data source available as free online, we found real prepayment information about aggregated mortgages based in 2019 that has different types of bond cashflows. From here, you can find out: "Supplemental Daily Prepayment Report" where you can find out the real prepayent data.
-https://capitalmarkets.freddiemac.com/mbs/daily-prepayment-report
+### 1. Prepayment Computation Framework
+The foundational metrics for measuring prepayment speed are derived from the **Single Monthly Mortality (SMM)** and the **Conditional Prepayment Rate (CPR)**
+The data is derived from Government website Freddiemac.com for real prepayment data report: https://capitalmarkets.freddiemac.com/mbs/daily-prepayment-report
 
-In terms of the prepayment computation, we first compute to find out each of the bond's Annualized Prepayment Rate (CPR), meaning the percentage you expect for the bond to prepay within an year. For example, given the Annaulzed CPR of 5%, then you expect the bond to prepay 5 percent of the outstanding principal (how much balance is left for the mortgage to be prepaid by the mortgage owners).
+#### Monthly Prepayment Rate (SMM)
+The SMM represents the percentage of the outstanding principal balance (after scheduled payments) that was prepaid in a given month.
 
-To compute Annualzed CPR, we use: CPR = 1 - (1- SMM)^12, where the amount of principal includes not just principal itself but other financing costs like selling homes and taxes. So SMM is the percentage that we expect the prepayment to be made in a month, accounting for the monthly sentiment of prepayment. so when SMM is 1 percent, we know that 1 percent of the remaining balance was prepayed, rather than yearly. And this amount is driven by the following equation:
+$$SMM = \text{Unscheduled Principal} / (\text{Beginning Balance} - \text{Scheduled Principal})$$
 
-SMM = Unscheduled Principal / (Current Loan or Bond balance - Scheduled Principal)
+Based on the Freddie Mac Supplemental Daily Prepayment Report, we map the variables as follows:
+* **Beginning Balance:** Cohort Current UPB
+* **Scheduled Principal:** Scheduled Principal  
+* **Unscheduled Principal:** Unscheduled Principal Reduction Amount
 
-So in our table given, we have:
-Scheduled principal: Originally planned set principal amount.
-Unsheculed principal: Payments that were not part of the original plan like refinancing, home selling, taxation, etc.
+#### Annualized Prepayment Rate (CPR)
+To annualize the monthly sentiment into a yearly expectation:
 
-In our data, we match the following as:
-Beginning Balance = "Cohort Current UPB"
-Scheduled Principal = "Scheduled Principal"
-Principal Reduction Amount = "Unscheduled Principal Reduction Amount"
-Unscheduled Principal = "Unscheduled Principal Reduction Amoun"t"
+$$\text{CPR} = 1 - (1 - \text{SMM})^{12}$$
 
-And we compute SMM. Afterwards, we compute CPR using the equation above: CPR = 1 - (1- SMM)^12
-Now we have Annualized CPR, where based on textbook: "Bond Markets, Analysis and Strategies", the conditional prepayment rate follows S-Curve where as the mortgage rate at first accelates as there is a boudnary in the middle of the curve that is attractive for borrowers to refinance and make large prepayments. However, as the market rate continues to go up higher, the S-curve smooths out as it becomes less attractive for borrowers to make large prepaymetns due to the unattractive high mortgage rate.
-[Image]
-To model this S-curve refinance relationship of prepayment and market mortgage rate, logistic curve is our decision to use to project the ideal future prepayment rate. For this computation, we use:
+---
+### 2. The Logistic Prepayment Model (S-Curve)
+Refinancing behavior is non-linear. Homeowners do not respond to interest rate changes linearly; instead, they follow an **S-Curve** relationship. Prepayment speeds accelerate once a specific threshold is hit but plateau (burnout) as the pool of rational refinancers depletes.
 
-As we have the Annualzied CPR of each bonds at that period of time, then we look at the distribution of our annualized CPR so we can compute the future projected CPR (Conditional Prepayment Rate) where we use the equations based on CPR min and max.
+To model this, we use the **Logistic Curve** equation:
+**CPR(t) = CPR_min + (CPR_max - CPR_min) * [1 / (1 + e^-k(I_t - x_0))]
 
-CPR (t) = Future Conditional Prepayment Rate = CPR(min) + (CPR max - CPR min) * (1/1+e^-k(It-x0))
+$$\text{CPR}(t) = \text{CPR}_{\min} + (\text{CPR}_{\max} - \text{CPR}_{\min}) \cdot \frac{1}{1 + e^{-k(I_t - x_0)}}$$
 
-where I(t) = c - r(t):
-I(t): refiannce sentiment
-c: the original rate that the bond was issued that the mortage owner has been prepaying
-r(t): the current market rate that if the bond holder refinancees, then they will use this current market rate as the new mortage rate.
 
-For the CPR min, this is the bottom distribution's minimum CPR based on our data distribution and vice versa for CPR max.
+**Variable Definitions:**
+* **$I(t) = c - r(t)$**: The **Refinance Sentiment**. 
+    * $c$: Original mortgage coupon rate.
+    * $r(t)$: Current market rate (projected via the Hull-White Model).
+* **$CPR_{min} / CPR_{max}$**: The floor and ceiling of prepayment speeds, determined via Bootstrap sampling.
+* **$k$**: Sensitivity factor (how fast the market reacts to rate drops).
+* **$x_0$**: Threshold (the spread required before refinancing becomes economically attractive).
 
-k: sensitivity / tolerance level of the model that refines how fast or slow it captures the CPR increases.
-x0: threshhold -> minimum threshold that distinguishes the decision to refinance or not.
+---
+### 3. Methodology: Bootstrap Monte Carlo
+To avoid the limitations of deterministic cpr min and max models or assuming a perfect Normal distribution, we apply a **Bootstrap sampling** method within our Monte Carlo framework.
 
-To project the prepayment, we decided to use Monte Carlo Method's application of Boostrap methodology. While the traditional Monte Carlo method simulates from a simulation of randomized distribution that is not drawing from the original data set, the Bootstrap methodology draws from an actual data as distribution.
+#### $CPR_{min} and CPR_{max}$
+Instead of fixed values, we draw from the actual 2019 data distribution:
+1.  **Lower Bound ($CPR_{min}, CPR_{max}$):** We isolate the bottom 20% of the real CPR distribution and resample uniformly. This captures the "baseline" that accurately capture the CPR's behavior that follows S-Curve due to refinance incentives. We apply similar methods to CPR_max for 20 percent top of the distribution. 
 
-In the bootstrap sampling methods, to compute minimum CPR, we take the 20 percent bottom distribution of the CPR data and resample uniformly from the observed data points to capture real CPR data set that may not be normally distributed but rather realisically skewed due as CPR follows S curve relationship with refiannce behavior. This approach approximates CPR's low mean value better than just finding the edge of the dataset and cutting the minimum part of the dataset which can be abrupt in capturing the distribution. Similarly, we do run the same botstramp sampling methods for high CPR located in 20 percent top of the distribution in CPR.
 
-*Applying what we learned in class, this strategy avoids having a deterministics min and max cpr to Monte Carlo Method that captures the distribution of CPR. 
-Now that we have both min CPR and max CPR, we combine our datasets with the projected interest rate from White Hull scenarios given from Hull White Model given as r(t) to compute the I(t)  as refinance sentiment and we now have all the satisified inputs. Then, we now project the Future conditional Prepayment Rate. 
+#### The Simulation Process
+1.  **Interest Rate Path:** Generate $r(t)$ using the **Hull-White short-rate model**.
+2.  **Sentiment Calculation:** Compute $I(t)$ for each time step.
+3.  **Bootstrap Draw:** For each simulation path, draw a $CPR_{min}$ and $CPR_{max}$ from the empirical 2019 dataset.
+4.  **CPR Projection:** Apply the Logistic function to find the future projected prepayment rate.
 
-Our result indicates that
-
-Given the projected CPR, 
-It is resampling uniformly from the observed data points. 
+---
+### Summary of Results
+By resampling uniformly from observed data points, the model captures **realistically skewed distributions**. This accounts for the fact that refinancing behavior is often suppressed by friction costs and "burnout," providing a more robust risk assessment for mortgage-backed securities than traditional Gaussian simulations.
 
 
 # Part 4: MBS Valuation
