@@ -46,16 +46,36 @@ This part uses the fitted Treasury yield curve from Part 1 to initalize and simu
 
 ---
 
+The short rate is modeled as 
+$$r(t)=x(t)+y(t)+\phi(t)$$
+
+where
+
+$$dx(t)=-a x(t)\,dt+\sigma\,dW_1(t)$$
+$$dy(t)=-b y(t)\,dt+\eta\,dW_2(t)$$
+
+and 
+
+$$\mathrm{corr}(dW_1,dW_2)=\rho$$
+
+The deterministic shift term is
+
+$$
+\phi(t)=f(0,t)
++\frac{\sigma^2}{2a^2}(1-e^{-at})^2
++\frac{\eta^2}{2b^2}(1-e^{-bt})^2
++\frac{\rho\sigma\eta}{ab}(1-e^{-at})(1-e^{-bt})
+$$
+
+---
+
 ## Features
 
 - **Yield Curve Interface** - Uses the fitted yield curve from Part 1 as the initial term structure input
 
-- **Two-Factor Hull-White Model** - Models the short rate as the sum of two latent factors and a deterministic shift term
-$$r(t) = x(t)+y(t)+\phi(t)$$
+- **Two-Factor Hull-White Model** - Models the short rate paths under the 2-factor Hull-White framework
 
-- **Curve-Consistent Initialization** - Extracts the inital forward curve f(0,t) and initial short rate r(0) from the fitted yield curve
-
-- **Correlated Monte Carlo Simulation** - Simulates two correlated Brownian shocks to generate pathwise short-rate scenarios under the 2-factor Hull-White
+- **Correlated Monte Carlo Simulation** - Simulates two correlated Brownian shocks to generate pathwise short-rate scenarios
 
 - **Path Statistics and Visualization** - Produce sample short-rate path plots together with the mean path and 90% simulation band
 
