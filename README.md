@@ -251,7 +251,7 @@ Using short rate paths and CPR paths, we calculate our MBS price by discounting 
 
 ![MBS Valuation](images/4.png)
 
-![Distribution of Price Differences in Cubic and APQ interpolation methods](images/5.png)
+![Distribution of Price Differences in Cubic and APQ interpolation methods](images/6.png)
 
 # Citations：
 Hagan, P. S. (2018). Building curves using area preserving quadratic splines https://onlinelibrary.wiley.com/doi/abs/10.1002/wilm.10676
