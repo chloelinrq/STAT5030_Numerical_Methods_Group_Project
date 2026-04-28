@@ -11,12 +11,14 @@ $$SMM = \text{Unscheduled Principal} / (\text{Beginning Balance} - \text{Schedul
 
 Based on the Freddie Mac Supplemental Daily Prepayment Report, we map the variables as follows:
 * **Beginning Balance:** Cohort Current UPB
-* **Scheduled Principal:** Scheduled Principal
+* **Scheduled Principal:** Scheduled Principal  
 * **Unscheduled Principal:** Unscheduled Principal Reduction Amount
 
 #### Annualized Prepayment Rate (CPR)
 To annualize the monthly sentiment into a yearly expectation:
+
 $$\text{CPR} = 1 - (1 - \text{SMM})^{12}$$
+
 ---
 
 ### 2. The Logistic Prepayment Model (S-Curve)
