@@ -26,6 +26,7 @@ Refinancing behavior is non-linear. Homeowners do not respond to interest rate c
 
 To model this, we use the **Logistic Curve** equation:
 $$\text{CPR}(t) = \text{CPR}_{\text{min}} + (\text{CPR}_{\text{max}} - \text{CPR}_{\text{min}}) \cdot \left[ \frac{1}{1 + e^{-k(I_t - x_0)}} \right]
+$\mathrm{CPR}(t) = \mathrm{CPR}_{\min} + \frac{\mathrm{CPR}_{\max} - \mathrm{CPR}_{\min}}{1 + e^{-k\left(I_t - x_0\right)}}$
 
 $$**Variable Definitions:**
 * **$I(t) = c - r(t)$**: The **Refinance Sentiment**. 
