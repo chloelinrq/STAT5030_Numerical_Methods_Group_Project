@@ -2,14 +2,13 @@
 ## Using Monte Carlo Prepayment Methodologies
 
 ### 1. Prepayment Computation Framework
-The foundational metrics for measuring prepayment speed are derived from the **Single Monthly Mortality (SMM)** and the **Conditional Prepayment Rate (CPR)**.
+The foundational metrics for measuring prepayment speed are derived from the **Single Monthly Mortality (SMM)** and the **Conditional Prepayment Rate (CPR)**
 
 #### Monthly Prepayment Rate (SMM)
 The SMM represents the percentage of the outstanding principal balance (after scheduled payments) that was prepaid in a given month.
 
-$$ SMM = Unscheduled Principa \ ((Beginning Balance} - (Scheduled Principal))
+$$SMM = Unscheduled Principal \ ((Beginning Balance} - (Scheduled Principal))
 
-$$s
 Based on the Freddie Mac Supplemental Daily Prepayment Report, we map the variables as follows:
 * **Beginning Balance:** Cohort Current UPB
 * **Scheduled Principal:** Scheduled Principal
