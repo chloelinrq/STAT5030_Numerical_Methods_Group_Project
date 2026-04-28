@@ -165,7 +165,7 @@ Instead of fixed values, we draw from the actual 2019 data distribution:
 
 
 #### The Simulation Process
-1.  **Interest Rate Path:** Generate $r(t)$ using the **Hull-White short-rate model**.
+1.  **Interest Rate Path:** Generate $r(t)$ using the Hull-White short-rate model**.
 2.  **Sentiment Calculation:** Compute $I(t)$ for each time step.
 3.  **Bootstrap Draw:** For each simulation path, draw a $CPR_{min}$ and $CPR_{max}$ from the empirical 2019 dataset.
 4.  **CPR Projection:** Apply the Logistic function to find the future projected prepayment rate.
