@@ -144,7 +144,6 @@ $$\text{CPR} = 1 - (1 - \text{SMM})^{12}$$
 Refinancing behavior is non-linear. Homeowners do not respond to interest rate changes linearly; instead, they follow an **S-Curve** relationship. Prepayment speeds accelerate once a specific threshold is hit but plateau (burnout) as the pool of rational refinancers depletes.
 
 To model this, we use the **Logistic Curve** equation:
-**CPR(t) = CPR_min + (CPR_max - CPR_min) * [1 / (1 + e^-k(I_t - x_0))]
 
 $$\text{CPR}(t) = \text{CPR}_{\min} + (\text{CPR}_{\max} - \text{CPR}_{\min}) \cdot \frac{1}{1 + e^{-k(I_t - x_0)}}$$
 
