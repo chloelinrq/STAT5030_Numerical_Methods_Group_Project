@@ -51,9 +51,9 @@ $$r(t)=x(t)+y(t)+\phi(t)$$
 
 where
 
-$$dx(t) = -a x(t)\;dt+\sigma\;dW_1(t)$$
+$$dx(t) = -a x(t)dt+\sigma dW_1(t)$$
 
-$$dy(t) = -b y(t)\;dt+\eta\;dW_2(t)$$
+$$dy(t) = -b y(t)dt+\eta dW_2(t)$$
 
 and 
 
