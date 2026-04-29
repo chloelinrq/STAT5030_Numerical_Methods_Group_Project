@@ -254,6 +254,21 @@ Using short rate paths and CPR paths, we calculate our MBS price by discounting 
 
 ![Distribution of Price Differences in Cubic and APQ interpolation methods](images/6.png)
 
+---
+
+## Additional Analysis: Effective Duration & Convexity
+
+To connect the MBS valuation to practical risk management, we compute effective duration and convexity by applying parallel shifts (±25bp) to the yield curve and re-running the full simulation pipeline.
+
+**Methodology:**
+$$\text{Eff. Duration} = \frac{P_{-\Delta r} - P_{+\Delta r}}{2 \cdot \Delta r \cdot P_0}$$
+
+$$\text{Eff. Convexity} = \frac{P_{+\Delta r} + P_{-\Delta r} - 2P_0}{(\Delta r)^2 \cdot P_0}$$
+
+Results show duration decreasing from ~8.2 to ~7.1 as coupon rates increase, consistent with higher-coupon MBS experiencing faster prepayment and shorter effective lives. Convexity follows a similar declining pattern.
+
+See `duration_analysis.py` for implementation.
+
 # Citations：
 Hagan, P. S. (2018). Building curves using area preserving quadratic splines https://onlinelibrary.wiley.com/doi/abs/10.1002/wilm.10676
 Bon
